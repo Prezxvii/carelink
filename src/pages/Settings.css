@@ -1,0 +1,185 @@
+/* Settings.css */
+:root {
+  --ocean-blue: #0077b6;
+  --silver: #e2e8f0;
+  --text-main: #64748b;
+  --black: #0f172a;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.settings-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  padding: 0 20px;
+}
+
+.settings-nav {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid var(--silver);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.s-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: 0.2s;
+}
+
+.s-nav-item.active {
+  background: rgba(0, 119, 182, 0.08);
+  color: var(--ocean-blue);
+}
+
+.settings-content {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid var(--silver);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-form .input-group {
+  margin-bottom: 24px;
+}
+
+.settings-form input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--silver);
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.btn-save-settings {
+  background: var(--ocean-blue);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.btn-save-settings:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 119, 182, 0.2);
+}
+
+.btn-save-settings:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.danger-zone {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--silver);
+}
+
+.btn-delete-account {
+  color: #ef4444;
+  background: none;
+  border: 1px solid #ef4444;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Additional Settings UI elements */
+.setting-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
+}
+
+.toggle-item h4 { margin: 0; font-size: 1rem; }
+.toggle-item p { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-main); }
+
+.privacy-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.option-card {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--silver);
+  border-radius: 16px;
+  align-items: flex-start;
+}
+
+.option-card h4 { margin: 0 0 8px; }
+.option-card p { font-size: 0.85rem; margin-bottom: 15px; }
+
+.btn-outline-sm {
+  background: white;
+  border: 1px solid var(--ocean-blue);
+  color: var(--ocean-blue);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s;
+}
+
+.btn-outline-sm:hover {
+  background: var(--ocean-blue);
+  color: white;
+}
+
+.danger-zone {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid #fee2e2;
+}
+
+.btn-delete-account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-delete-account:hover {
+  background: #fef2f2;
+}

@@ -1,0 +1,48 @@
+.about-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+.about-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--black);
+}
+
+.about-hero h1 span {
+  color: var(--ocean-blue);
+}
+
+.about-hero p {
+  font-size: 1.25rem;
+  color: #64748B;
+  margin-top: 15px;
+}
+
+.about-card {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid var(--silver);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-bottom: 30px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grid-item {
+  padding: 30px;
+  background: rgba(0, 119, 182, 0.03);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 119, 182, 0.1);
+}

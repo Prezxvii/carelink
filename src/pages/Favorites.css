@@ -1,0 +1,72 @@
+/* Favorites.css */
+.favorites-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.favorites-header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.btn-add-more {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 12px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--black);
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-add-more:hover {
+  background: #e2e8f0;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.empty-favorites {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid var(--silver);
+}
+
+.empty-icon-circle {
+  width: 80px;
+  height: 80px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #94a3b8;
+}
+
+.btn-explore-blue {
+  display: inline-block;
+  margin-top: 24px;
+  background: var(--ocean-blue);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+}

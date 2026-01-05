@@ -1,0 +1,329 @@
+/* --- MAIN CONTAINER --- */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding-bottom: 100px;
+  overflow-x: hidden;
+}
+
+/* --- HERO SECTION (SHRUNK) --- */
+.hero-section {
+  width: 100%;
+  /* 1. Reduced height from 85vh to a fixed compact range */
+  min-height: 480px; 
+  max-width: 100%;
+  /* 2. Reduced padding (Top from 160px to 100px) */
+  padding: 100px 20px 60px 20px; 
+  text-align: center;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* Background Handling */
+  background-size: cover !important;
+  background-position: center 30% !important; /* Slightly adjusted to show more skyline in shorter height */
+  background-repeat: no-repeat !important;
+  background-attachment: scroll;
+  position: relative; 
+}
+
+/* 3. Scaled down title for better proportions in smaller hero */
+.hero-title {
+  font-size: 3.2rem; 
+  font-weight: 900;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  color: var(--deep-black);
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: #334155;
+  max-width: 650px;
+  margin: 0 auto 2.5rem auto;
+  line-height: 1.6;
+}
+
+.hero-search-wrapper {
+  width: 100%;
+  max-width: 750px;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+/* --- HOW IT WORKS --- */
+.how-it-works {
+  width: 90%;
+  max-width: 1200px;
+  text-align: center;
+}
+
+.how-it-works h2 span {
+  color: var(--ocean-blue);
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-top: 50px;
+}
+
+.how-step {
+  padding: 50px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  position: relative;
+  transition: transform 0.3s ease;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.step-number {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--ocean-blue);
+  opacity: 0.2;
+}
+
+.icon-box {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.gif-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.how-step h4 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: var(--deep-black);
+}
+
+.how-step p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* --- RESOURCES GRID --- */
+.resources-grid-section {
+  width: 90%;
+  max-width: 1200px;
+}
+
+.section-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.resources-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  justify-items: center;
+}
+
+/* --- MISSION SECTION --- */
+.mission-section {
+  width: 90%;
+  max-width: 1200px;
+  padding: 40px 0;
+}
+
+.mission-wrapper {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.mission-text-container {
+  text-align: left;
+}
+
+.mission-description {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--deep-black);
+  margin: 25px 0;
+  font-weight: 500;
+}
+
+.mission-features {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.feature-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.gif-icon-small {
+  width: 35px;
+  height: 35px;
+}
+
+/* --- COMMUNITY CTA --- */
+.community-cta {
+  width: 100%;
+  padding: 100px 20px;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  border-radius: 60px 60px 0 0;
+}
+
+.cta-icon-box {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin: 0 auto 30px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gif-icon-large {
+  width: 60px;
+  height: 60px;
+}
+
+/* --- UTILITIES & FAQ --- */
+.section-label {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--deep-black);
+  letter-spacing: -1px;
+}
+
+.section-label span, .blue-text {
+  color: #0077B6;
+}
+
+.view-all-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0077B6;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 2px solid #0077B6;
+  color: #0077B6;
+  padding: 16px 35px;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background: #0077B6;
+  color: white;
+}
+
+.home-faq-section {
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.faq-item {
+  padding: 25px 30px;
+  cursor: pointer;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.faq-answer {
+  overflow: hidden;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* --- CATEGORY CARDS --- */
+.expanded-services {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.services-mini-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.service-mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 25px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  min-width: 160px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .how-grid { grid-template-columns: repeat(2, 1fr); }
+  .mission-wrapper { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+  .hero-title { font-size: 2.8rem; }
+}
+
+@media (max-width: 600px) {
+  .how-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 2.2rem; }
+  .hero-section { min-height: 400px; padding-top: 80px; }
+}

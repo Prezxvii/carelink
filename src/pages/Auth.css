@@ -1,0 +1,210 @@
+:root {
+  --ocean-blue: #0077B6;
+  --glossy-white: rgba(255, 255, 255, 0.95);
+  --silver: #E2E8F0;
+  --black: #0F172A;
+  --success-green: #10B981;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #F8FAFC;
+  padding: 40px 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #FFFFFF;
+  padding: 50px 40px;
+  border-radius: 28px;
+  border: 1px solid var(--silver);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- NEW: SPLIT NAME ROW --- */
+.auth-input-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.auth-input-row .auth-input-group {
+  flex: 1;
+}
+
+/* --- NEW: NEIGHBORHOOD SELECT DROPDOWN --- */
+.auth-select {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--silver);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: white;
+  color: var(--black);
+  cursor: pointer;
+  appearance: none; /* Removes native arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+  transition: 0.2s;
+}
+
+.auth-select:focus {
+  outline: none;
+  border-color: var(--ocean-blue);
+  box-shadow: 0 0 0 4px rgba(0, 119, 182, 0.05);
+}
+
+/* 1. GOOGLE BUTTON FIX */
+.google-btn-auth {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 1px solid var(--silver);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: background 0.2s;
+  appearance: none;
+}
+
+.google-btn-auth:hover {
+  background: #F8FAFC;
+}
+
+.google-btn-auth img { 
+  width: 20px; 
+  height: 20px;
+  object-fit: contain;
+}
+
+/* 2. DIVIDER FIX */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 25px 0;
+  color: #94A3B8;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--silver);
+}
+
+.auth-divider span {
+  padding: 0 15px;
+}
+
+/* 3. INPUTS & FORGOT LINK */
+.auth-input-group {
+  margin-bottom: 16px;
+}
+
+.auth-input-group input {
+  box-sizing: border-box; 
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--silver);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: white;
+  transition: 0.2s;
+}
+
+.auth-input-group input:focus {
+  outline: none;
+  border-color: var(--ocean-blue);
+  box-shadow: 0 0 0 4px rgba(0, 119, 182, 0.05);
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #64748B;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: block;
+  margin: 10px 0 20px auto; 
+  padding: 0;
+  width: fit-content;
+}
+
+.forgot-link:hover {
+  color: var(--ocean-blue);
+  text-decoration: underline;
+}
+
+/* 4. PASSWORD & EYE ICON FIXES */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 48px !important; 
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  cursor: pointer;
+  z-index: 10;
+  height: 100%;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--ocean-blue);
+}
+
+/* 5. ONBOARDING & OTHER STYLES */
+.auth-nav-top { margin-bottom: 25px; }
+.back-btn-pill {
+  display: flex; align-items: center; gap: 8px; background: var(--silver);
+  border: none; padding: 8px 16px; border-radius: 50px; color: var(--black);
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.auth-header { text-align: center; margin-bottom: 30px; }
+.auth-header h1 { font-size: 1.75rem; font-weight: 800; color: var(--black); margin: 0; }
+.auth-header p span { color: var(--ocean-blue); font-weight: 700; }
+.auth-icon-circle { width: 56px; height: 56px; background: rgba(0, 119, 182, 0.1); color: var(--ocean-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+.auth-submit-btn { width: 100%; padding: 14px; background: var(--ocean-blue); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+.auth-submit-btn:hover { background: #005B8E; transform: translateY(-1px); }
+.auth-submit-btn.success { background: var(--success-green); }
+.auth-footer { margin-top: 25px; text-align: center; font-size: 0.9rem; color: #64748B; }
+.footer-link { background: none; border: none; color: var(--ocean-blue); font-weight: 700; cursor: pointer; }
+.step-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--silver); transition: all 0.4s; }
+.dot.active { background: var(--ocean-blue); width: 24px; border-radius: 10px; }
+.interests-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 24px 0; }
+.interest-pill { padding: 10px 18px; border-radius: 50px; border: 1.5px solid var(--silver); background: white; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.interest-pill.active { background: var(--ocean-blue); color: white; border-color: var(--ocean-blue); }

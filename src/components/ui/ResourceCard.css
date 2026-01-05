@@ -1,0 +1,118 @@
+.resource-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--silver);
+  border-radius: 24px; /* Slightly softer corners */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  cursor: pointer;
+}
+
+.resource-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--ocean-blue);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* --- Favorite Button Styling --- */
+.favorite-btn {
+  background: #f8fafc;
+  border: 1px solid var(--silver);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  z-index: 10;
+}
+
+.favorite-btn:hover {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #ef4444;
+}
+
+.favorite-btn.active svg {
+  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.category-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ocean-blue);
+  text-transform: uppercase;
+  background: rgba(0, 119, 182, 0.08);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.card-title {
+  margin: 8px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.4;
+}
+
+.card-description {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--silver);
+  padding-top: 20px;
+}
+
+.details-btn {
+  background: #f1f5f9;
+  color: var(--black);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.details-btn:hover {
+  background: var(--ocean-blue);
+  color: white;
+}

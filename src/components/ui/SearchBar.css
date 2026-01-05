@@ -1,0 +1,125 @@
+/* SearchBar.css */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 0; /* Removing gap to use borders as dividers */
+  padding: 8px;
+  background: white;
+  border: 1px solid var(--silver);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.search-container:focus-within {
+  box-shadow: 0 12px 30px rgba(0, 119, 182, 0.12);
+  border-color: var(--ocean-blue);
+}
+
+/* Location Input Wrapper */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 2;
+  padding: 0 20px;
+  position: relative;
+  border-right: 1px solid var(--silver); /* Vertical Divider */
+}
+
+.search-icon-inline {
+  color: var(--ocean-blue);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--black);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Category Select Wrapper */
+.select-wrapper {
+  flex: 1;
+  padding: 0 20px;
+}
+
+.search-select {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  outline: none;
+  appearance: none; /* Removes default browser arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230077B6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+/* The "Find Help" Button */
+.search-button {
+  padding: 14px 32px;
+  background: var(--ocean-blue);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-button:hover {
+  background: #005B8E;
+  transform: scale(1.02);
+}
+
+.search-button:active {
+  transform: scale(0.98);
+}
+
+/* --- RESPONSIVE DESIGN --- */
+
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+    border-radius: 20px;
+  }
+
+  .input-wrapper {
+    border-right: none;
+    border-bottom: 1px solid var(--silver);
+    width: 100%;
+    padding: 10px 10px;
+  }
+
+  .select-wrapper {
+    width: 100%;
+    padding: 5px 10px;
+  }
+
+  .search-button {
+    width: 100%;
+    padding: 16px;
+  }
+}
