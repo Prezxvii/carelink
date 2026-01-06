@@ -1,3 +1,4 @@
+// server.js — UPDATED FULL FILE (NO app.options wildcard)
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
@@ -11,19 +12,44 @@ const app = express();
 connectDB();
 
 // 2. Security & Parsing Middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+  })
+);
 
-// CORS with detailed logging
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
-}));
+// ✅ CORS (works for Vercel + local). No wildcard OPTIONS route needed.
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3000',
+  'https://carelink-opal.vercel.app'
+];
 
-// Log all incoming requests
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow server-to-server requests (Render health checks, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      // Exact allowlist
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // Allow all Vercel preview deployments
+      if (origin.endsWith('.vercel.app')) return callback(null, true);
+
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
+  })
+);
+
+// ✅ Important: parse JSON BEFORE routes
+app.use(express.json());
+
+// --- Request Logging ---
 app.use((req, res, next) => {
   console.log('\n=== INCOMING REQUEST ===');
   console.log(`🕒 Time: ${new Date().toISOString()}`);
@@ -32,17 +58,22 @@ app.use((req, res, next) => {
   console.log(`🌐 Origin: ${req.headers.origin || 'No origin header'}`);
   console.log(`📦 Content-Type: ${req.headers['content-type'] || 'Not set'}`);
   console.log(`🔑 Auth Token: ${req.headers['x-auth-token'] ? 'Present' : 'Not present'}`);
-  console.log(`📋 Body:`, req.body);
+
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'OPTIONS') {
+    const bodyPreview = { ...(req.body || {}) };
+    if (bodyPreview.password) bodyPreview.password = '***';
+    console.log('📋 Body:', bodyPreview);
+  }
+
   console.log('========================\n');
   next();
 });
 
-app.use(express.json()); // MUST be above the routes
-
-// Log after JSON parsing
+// ✅ Optional: explicitly return 204 for preflight (no wildcard path matching)
+// This avoids any router pattern issues.
 app.use((req, res, next) => {
-  if (req.method === 'POST' || req.method === 'PUT') {
-    console.log('✅ Parsed JSON Body:', req.body);
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
   }
   next();
 });
@@ -59,21 +90,23 @@ app.get('/api/resources', async (req, res) => {
   try {
     console.log('📊 Fetching NYC resources...');
     const APP_TOKEN = process.env.NYC_APP_TOKEN || 's3uth6GGknsBpPg4cWEJTxnt8';
+
     const response = await axios.get('https://data.cityofnewyork.us/resource/yjpx-srhp.json', {
-      params: { 
-        '$limit': 500,                      
-        '$where': "language = 'English'",   
-        '$order': 'program_name ASC'        
+      params: {
+        $limit: 500,
+        $where: "language = 'English'",
+        $order: 'program_name ASC'
       },
-      headers: { 
-        'X-App-Token': APP_TOKEN 
+      headers: {
+        'X-App-Token': APP_TOKEN
       }
     });
+
     console.log(`✅ NYC API returned ${response.data.length} resources`);
     res.json(response.data);
   } catch (error) {
-    console.error("❌ NYC API Fetch Error:", error.message);
-    res.status(500).json({ error: "Failed to fetch NYC Data" });
+    console.error('❌ NYC API Fetch Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch NYC Data' });
   }
 });
 
@@ -94,11 +127,14 @@ app.use((err, req, res, next) => {
 // 4. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`-----------------------------------------`);
+  console.log('-----------------------------------------');
   console.log(`🚀 Server:  http://localhost:${PORT}`);
   console.log(`🔑 Auth:    http://localhost:${PORT}/api/auth`);
   console.log(`📰 Content: http://localhost:${PORT}/api/content`);
   console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? '✅ Set' : '❌ MISSING'}`);
   console.log(`📊 MongoDB: ${process.env.MONGO_URI ? '✅ Configured' : '❌ MISSING'}`);
-  console.log(`-----------------------------------------`);
+  console.log('✅ CORS allowed origins:');
+  allowedOrigins.forEach((o) => console.log(`   - ${o}`));
+  console.log('   - *.vercel.app (previews allowed)');
+  console.log('-----------------------------------------');
 });
