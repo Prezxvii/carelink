@@ -1,67 +1,140 @@
 const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const helmet = require('helmet');
-const connectDB = require('./config/db');
-require('dotenv').config();
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const app = express();
+// --- MIDDLEWARE: PROTECT ROUTES ---
+const auth = async (req, res, next) => {
+  const token = req.header('x-auth-token');
+  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
 
-// 1. Connect to MongoDB
-connectDB();
-
-// 2. Security & Parsing Middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
-
-// FIXED: Proper CORS configuration for Safari
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
-}));
-
-app.use(express.json()); // MUST be above the routes
-
-// 3. Mount Modular Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/content', require('./routes/content'));
-
-/**
- * GET /api/resources
- * Fetches data from NYC Open Data API
- */
-app.get('/api/resources', async (req, res) => {
   try {
-    const APP_TOKEN = process.env.NYC_APP_TOKEN || 's3uth6GGknsBpPg4cWEJTxnt8';
-    const response = await axios.get('https://data.cityofnewyork.us/resource/yjpx-srhp.json', {
-      params: { 
-        '$limit': 500,                      
-        '$where': "language = 'English'",   
-        '$order': 'program_name ASC'        
-      },
-      headers: { 
-        'X-App-Token': APP_TOKEN 
-      }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (e) {
+    res.status(400).json({ message: 'Token is not valid' });
+  }
+};
+
+// --- REGISTER ---
+// Endpoint: POST /api/auth/register
+router.post('/register', async (req, res) => {
+  const { name, email, password, location, interests } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ message: "User already exists" });
+
+    user = new User({ name, email, password, location, interests });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        location, 
+        interests, 
+        savedItems: [] 
+      } 
     });
-    res.json(response.data);
-  } catch (error) {
-    console.error("NYC API Fetch Error:", error.message);
-    res.status(500).json({ error: "Failed to fetch NYC Data" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error during registration" });
   }
 });
 
-// Health Check
-app.get('/health', (req, res) => res.send('CareLink Server is Online'));
+// --- LOGIN ---
+// Endpoint: POST /api/auth/login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-// 4. Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`-----------------------------------------`);
-  console.log(`🚀 Server:  http://localhost:${PORT}`);
-  console.log(`🔑 Auth:    http://localhost:${PORT}/api/auth`);
-  console.log(`📰 Content: http://localhost:${PORT}/api/content`);
-  console.log(`-----------------------------------------`);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        location: user.location, 
+        interests: user.interests, 
+        savedItems: user.savedItems 
+      } 
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error during login" });
+  }
 });
+
+// --- TOGGLE FAVORITE ---
+// Endpoint: POST /api/auth/toggle-favorite
+router.post('/toggle-favorite', auth, async (req, res) => {
+  const { resourceId } = req.body;
+  try {
+    const user = await User.findById(req.user.id);
+    const isSaved = user.savedItems.includes(resourceId);
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      isSaved ? { $pull: { savedItems: resourceId } } : { $addToSet: { savedItems: resourceId } },
+      { new: true }
+    );
+
+    res.json({ success: true, savedItems: updatedUser.savedItems });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating favorites" });
+  }
+});
+
+// --- UPDATE PROFILE ---
+// Endpoint: PUT /api/auth/update-profile
+router.put('/update-profile', auth, async (req, res) => {
+  const { name, location, interests } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: { name, location, interests } },
+      { new: true }
+    ).select('-password');
+
+    res.json({ success: true, user: updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating profile" });
+  }
+});
+
+// --- GET CURRENT USER ---
+// Endpoint: GET /api/auth/user
+router.get('/user', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching user data" });
+  }
+});
+
+// --- DELETE ACCOUNT ---
+// Endpoint: DELETE /api/auth/delete-account
+router.delete('/delete-account', auth, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    res.json({ success: true, message: "Account deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error during account deletion" });
+  }
+});
+
+module.exports = router;
