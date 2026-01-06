@@ -1,20 +1,32 @@
+// routes/auth.js
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// --- MIDDLEWARE: PROTECT ROUTES ---
+// ✅ (OPTIONAL but recommended) Better token extraction:
+// supports: x-auth-token OR Authorization: Bearer <token>
 const auth = async (req, res, next) => {
-  const token = req.header('x-auth-token');
-  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+  const headerToken = req.header('x-auth-token');
+  const bearer = req.header('authorization');
+
+  const token =
+    headerToken ||
+    (bearer && bearer.toLowerCase().startsWith('bearer ')
+      ? bearer.slice(7)
+      : null);
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token, authorization denied' });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.user = decoded; // { id: ... }
     next();
   } catch (e) {
-    res.status(400).json({ message: 'Token is not valid' });
+    return res.status(401).json({ message: 'Token is not valid' });
   }
 };
 
@@ -22,29 +34,36 @@ const auth = async (req, res, next) => {
 // Endpoint: POST /api/auth/register
 router.post('/register', async (req, res) => {
   const { name, email, password, location, interests } = req.body;
+
   try {
     let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: "User already exists" });
+    if (user) return res.status(400).json({ message: 'User already exists' });
 
     user = new User({ name, email, password, location, interests });
+
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
+
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ 
-      token, 
-      user: { 
-        id: user._id, 
-        name: user.name, 
-        email: user.email, 
-        location, 
-        interests, 
-        savedItems: [] 
-      } 
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        location,
+        interests,
+        savedItems: []
+      }
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error during registration" });
+    console.error('REGISTER ERROR:', err);
+    res.status(500).json({ message: 'Server error during registration' });
   }
 });
 
@@ -52,27 +71,32 @@ router.post('/register', async (req, res) => {
 // Endpoint: POST /api/auth/login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ 
-      token, 
-      user: { 
-        id: user._id, 
-        name: user.name, 
-        email: user.email, 
-        location: user.location, 
-        interests: user.interests, 
-        savedItems: user.savedItems 
-      } 
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        location: user.location,
+        interests: user.interests,
+        savedItems: user.savedItems
+      }
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error during login" });
+    console.error('LOGIN ERROR:', err);
+    res.status(500).json({ message: 'Server error during login' });
   }
 });
 
@@ -80,19 +104,23 @@ router.post('/login', async (req, res) => {
 // Endpoint: POST /api/auth/toggle-favorite
 router.post('/toggle-favorite', auth, async (req, res) => {
   const { resourceId } = req.body;
+
   try {
     const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
     const isSaved = user.savedItems.includes(resourceId);
-    
+
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       isSaved ? { $pull: { savedItems: resourceId } } : { $addToSet: { savedItems: resourceId } },
       { new: true }
-    );
+    ).select('-password');
 
     res.json({ success: true, savedItems: updatedUser.savedItems });
   } catch (err) {
-    res.status(500).json({ message: "Error updating favorites" });
+    console.error('TOGGLE FAVORITE ERROR:', err);
+    res.status(500).json({ message: 'Error updating favorites' });
   }
 });
 
@@ -100,6 +128,7 @@ router.post('/toggle-favorite', auth, async (req, res) => {
 // Endpoint: PUT /api/auth/update-profile
 router.put('/update-profile', auth, async (req, res) => {
   const { name, location, interests } = req.body;
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
@@ -109,7 +138,8 @@ router.put('/update-profile', auth, async (req, res) => {
 
     res.json({ success: true, user: updatedUser });
   } catch (err) {
-    res.status(500).json({ message: "Error updating profile" });
+    console.error('UPDATE PROFILE ERROR:', err);
+    res.status(500).json({ message: 'Error updating profile' });
   }
 });
 
@@ -118,9 +148,11 @@ router.put('/update-profile', auth, async (req, res) => {
 router.get('/user', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching user data" });
+    console.error('GET USER ERROR:', err);
+    res.status(500).json({ message: 'Error fetching user data' });
   }
 });
 
@@ -129,11 +161,12 @@ router.get('/user', auth, async (req, res) => {
 router.delete('/delete-account', auth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-    
-    res.json({ success: true, message: "Account deleted successfully" });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ success: true, message: 'Account deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: "Server error during account deletion" });
+    console.error('DELETE ACCOUNT ERROR:', err);
+    res.status(500).json({ message: 'Server error during account deletion' });
   }
 });
 

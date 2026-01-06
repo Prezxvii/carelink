@@ -1,3 +1,4 @@
+// src/pages/Community.js
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Send, Newspaper, Plus, BadgeCheck, PlayCircle,
@@ -10,8 +11,10 @@ import './Community.css';
 import MOCK_VIDEOS from '../data/mockVideos';
 import MOCK_LIVE_FEED from '../data/mockLiveFeed';
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'https://carelink-60s8.onrender.com';
+// ✅ Always keep REACT_APP_API_URL as the DOMAIN only:
+// Local:  http://localhost:5000
+// Prod:   https://carelink-60s8.onrender.com
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const Community = () => {
   const [news, setNews] = useState([]);
@@ -212,7 +215,6 @@ const Community = () => {
             Care<span>Link</span> Community
           </h1>
 
-          {/* If you want a Share modal later, we can wire it back up */}
           <button
             className="post-resource-btn"
             onClick={() => alert('Share modal coming next!')}
@@ -387,6 +389,7 @@ const Community = () => {
 };
 
 export default Community;
+
 
 
 
