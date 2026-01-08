@@ -35,6 +35,13 @@ const Community = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedComments, setExpandedComments] = useState(new Set());
   const [commentInputs, setCommentInputs] = useState({});
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareForm, setShareForm] = useState({
+    title: '',
+    description: '',
+    link: '',
+    type: 'resource'
+  });
 
   const NEWS_PAGE_SIZE = 6;
   const VIDEO_PAGE_SIZE = 6;
@@ -159,6 +166,29 @@ const Community = () => {
     setCommentInputs((prev) => ({ ...prev, [id]: '' }));
   };
 
+  const handleShareResource = (e) => {
+    e.preventDefault();
+    
+    if (!shareForm.title.trim()) return;
+
+    const newResource = {
+      id: Date.now(),
+      type: 'user',
+      user: 'You',
+      title: shareForm.title,
+      text: shareForm.description,
+      link: shareForm.link,
+      time: 'Just now',
+      likes: 0,
+      isLiked: false,
+      comments: []
+    };
+
+    setNycResources((prev) => [newResource, ...prev]);
+    setShowShareModal(false);
+    setShareForm({ title: '', description: '', link: '', type: 'resource' });
+  };
+
   const filteredFeed = useMemo(() => {
     let combined = [...nycResources, ...userPosts];
 
@@ -208,6 +238,80 @@ const Community = () => {
               </motion.div>
             </motion.div>
           )}
+
+          {showShareModal && (
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowShareModal(false)}
+            >
+              <motion.div
+                className="modal-content share-modal"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="modal-header">
+                  <h2>Share a Resource</h2>
+                  <button onClick={() => setShowShareModal(false)}>
+                    <X />
+                  </button>
+                </div>
+
+                <form onSubmit={handleShareResource} className="share-form">
+                  <div className="form-group">
+                    <label htmlFor="resource-title">Title *</label>
+                    <input
+                      id="resource-title"
+                      type="text"
+                      placeholder="e.g., Free Medical Clinic in Brooklyn"
+                      value={shareForm.title}
+                      onChange={(e) => setShareForm({ ...shareForm, title: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="resource-description">Description</label>
+                    <textarea
+                      id="resource-description"
+                      placeholder="Tell the community about this resource..."
+                      value={shareForm.description}
+                      onChange={(e) => setShareForm({ ...shareForm, description: e.target.value })}
+                      rows="4"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="resource-link">Link (Optional)</label>
+                    <input
+                      id="resource-link"
+                      type="url"
+                      placeholder="https://example.com"
+                      value={shareForm.link}
+                      onChange={(e) => setShareForm({ ...shareForm, link: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-actions">
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={() => setShowShareModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" className="submit-btn">
+                      <Plus size={18} /> Share Resource
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         <header className="community-header">
@@ -217,9 +321,9 @@ const Community = () => {
 
           <button
             className="post-resource-btn"
-            onClick={() => alert('Share modal coming next!')}
+            onClick={() => setShowShareModal(true)}
           >
-            <Plus size={18} /> Share
+            <Plus size={18} /> Share a Resource
           </button>
         </header>
 
@@ -389,19 +493,3 @@ const Community = () => {
 };
 
 export default Community;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
