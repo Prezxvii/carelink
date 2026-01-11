@@ -173,7 +173,7 @@ const Community = () => {
 
     const newResource = {
       id: Date.now(),
-      type: 'user',
+      type: 'resource',
       user: 'You',
       title: shareForm.title,
       text: shareForm.description,
@@ -393,6 +393,23 @@ const Community = () => {
                       >
                         <MessageCircle size={16} /> {item.comments?.length || 0}
                       </button>
+
+                      {item.type === 'resource' && (
+                        <a
+                          href={item.link || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="action-btn resource-link-btn"
+                          onClick={(e) => {
+                            if (!item.link) {
+                              e.preventDefault();
+                              alert('No link available for this resource');
+                            }
+                          }}
+                        >
+                          <ExternalLink size={16} /> Visit
+                        </a>
+                      )}
                     </div>
 
                     {expandedComments.has(item.id) && (
