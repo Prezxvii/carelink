@@ -1088,3 +1088,41 @@
 .submit-btn:active {
   transform: translateY(0);
 }
+
+
+/* Add these styles to your Community.css file - Resource Link Button in Feed */
+
+.resource-link-btn {
+  color: var(--ocean-blue) !important;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  background: rgba(0, 119, 182, 0.08);
+}
+
+.resource-link-btn:hover {
+  color: white !important;
+  background: var(--ocean-blue);
+  transform: translateY(-1px);
+}
+
+/* Fix for modal close button */
+.modal-header button {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.modal-header button:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  transform: rotate(90deg);
+}
