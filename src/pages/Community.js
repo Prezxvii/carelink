@@ -11,9 +11,6 @@ import './Community.css';
 import MOCK_VIDEOS from '../data/mockVideos';
 import MOCK_LIVE_FEED from '../data/mockLiveFeed';
 
-// ✅ Always keep REACT_APP_API_URL as the DOMAIN only:
-// Local:  http://localhost:5000
-// Prod:   https://carelink-60s8.onrender.com
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const Community = () => {
@@ -23,7 +20,6 @@ const Community = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
 
-  // --- Pagination & Loading ---
   const [newsPage, setNewsPage] = useState(1);
   const [hasMoreNews, setHasMoreNews] = useState(true);
   const [videoPageToken, setVideoPageToken] = useState(null);
@@ -31,7 +27,6 @@ const Community = () => {
   const [ytQuota, setYtQuota] = useState({ exceeded: false, message: '' });
   const [newMessage, setNewMessage] = useState('');
 
-  // --- UI Control States ---
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedComments, setExpandedComments] = useState(new Set());
   const [commentInputs, setCommentInputs] = useState({});
