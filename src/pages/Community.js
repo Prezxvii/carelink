@@ -44,6 +44,27 @@ const Community = () => {
   const openVideo = useCallback((video) => setActiveVideo(video), []);
   const closeVideo = useCallback(() => setActiveVideo(null), []);
 
+  // ✅ Grab a URL from either "link" OR "url" (supports MOCK_LIVE_FEED)
+  const getItemUrl = useCallback((item) => item?.link || item?.url || '', []);
+
+  // ✅ Normalize & validate URLs (adds https:// when missing)
+  const normalizeUrl = useCallback((raw) => {
+    if (!raw) return null;
+
+    const trimmed = String(raw).trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^https?:\/\//i.test(trimmed)
+      ? trimmed
+      : `https://${trimmed}`;
+
+    try {
+      return new URL(withProtocol).toString();
+    } catch {
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === 'Escape') closeVideo();
@@ -163,7 +184,7 @@ const Community = () => {
 
   const handleShareResource = (e) => {
     e.preventDefault();
-    
+
     if (!shareForm.title.trim()) return;
 
     const newResource = {
@@ -172,6 +193,7 @@ const Community = () => {
       user: 'You',
       title: shareForm.title,
       text: shareForm.description,
+      // ✅ store as link (your feed supports link/url either way)
       link: shareForm.link,
       time: 'Just now',
       likes: 0,
@@ -217,7 +239,7 @@ const Community = () => {
               >
                 <div className="modal-header">
                   <h2>{activeVideo.snippet.title}</h2>
-                  <button onClick={closeVideo}>
+                  <button onClick={closeVideo} aria-label="Close video modal">
                     <X />
                   </button>
                 </div>
@@ -251,7 +273,7 @@ const Community = () => {
               >
                 <div className="modal-header">
                   <h2>Share a Resource</h2>
-                  <button onClick={() => setShowShareModal(false)}>
+                  <button onClick={() => setShowShareModal(false)} aria-label="Close share modal">
                     <X />
                   </button>
                 </div>
@@ -350,90 +372,111 @@ const Community = () => {
               </form>
 
               <div className="chat-messages">
-                {filteredFeed.map((item) => (
-                  <div key={item.id} className={`chat-bubble enhanced ${item.type}`}>
-                    <div className="bubble-header">
-                      <span className="user-name">
-                        {item.user}{' '}
-                        {item.isExpert && (
-                          <BadgeCheck size={14} className="expert-badge" />
-                        )}
-                      </span>
-                    </div>
+                {filteredFeed.map((item) => {
+                  const resourceUrl = normalizeUrl(getItemUrl(item));
+                  const isVisitable = Boolean(getItemUrl(item)); // if they provided *something*
+                  const hasValidUrl = Boolean(resourceUrl);
 
-                    {item.title && <h4 className="feed-title">{item.title}</h4>}
-                    <p className="feed-text">{item.text}</p>
+                  return (
+                    <div key={item.id} className={`chat-bubble enhanced ${item.type}`}>
+                      <div className="bubble-header">
+                        <span className="user-name">
+                          {item.user}{' '}
+                          {item.isExpert && (
+                            <BadgeCheck size={14} className="expert-badge" />
+                          )}
+                        </span>
+                      </div>
 
-                    <div className="bubble-actions">
-                      <button
-                        className={`action-btn ${item.isLiked ? 'liked' : ''}`}
-                        onClick={() => toggleLike(item.id)}
-                      >
-                        <Heart
-                          size={16}
-                          fill={item.isLiked ? 'currentColor' : 'none'}
-                        />{' '}
-                        {item.likes}
-                      </button>
+                      {item.title && (
+                        hasValidUrl ? (
+                          <a
+                            className="feed-title-link"
+                            href={resourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open resource"
+                          >
+                            <h4 className="feed-title">{item.title}</h4>
+                          </a>
+                        ) : (
+                          <h4 className="feed-title">{item.title}</h4>
+                        )
+                      )}
 
-                      <button
-                        className="action-btn"
-                        onClick={() => {
-                          const newSet = new Set(expandedComments);
-                          newSet.has(item.id)
-                            ? newSet.delete(item.id)
-                            : newSet.add(item.id);
-                          setExpandedComments(newSet);
-                        }}
-                      >
-                        <MessageCircle size={16} /> {item.comments?.length || 0}
-                      </button>
+                      <p className="feed-text">{item.text}</p>
 
-                      {item.type === 'resource' && (
-                        <a
-                          href={item.link || '#'}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="action-btn resource-link-btn"
-                          onClick={(e) => {
-                            if (!item.link) {
-                              e.preventDefault();
-                              alert('No link available for this resource');
-                            }
+                      <div className="bubble-actions">
+                        <button
+                          className={`action-btn ${item.isLiked ? 'liked' : ''}`}
+                          onClick={() => toggleLike(item.id)}
+                        >
+                          <Heart
+                            size={16}
+                            fill={item.isLiked ? 'currentColor' : 'none'}
+                          />{' '}
+                          {item.likes}
+                        </button>
+
+                        <button
+                          className="action-btn"
+                          onClick={() => {
+                            const newSet = new Set(expandedComments);
+                            newSet.has(item.id)
+                              ? newSet.delete(item.id)
+                              : newSet.add(item.id);
+                            setExpandedComments(newSet);
                           }}
                         >
-                          <ExternalLink size={16} /> Visit
-                        </a>
+                          <MessageCircle size={16} /> {item.comments?.length || 0}
+                        </button>
+
+                        {/* ✅ Show for ANY item that includes link/url (NYC + user + resource) */}
+                        {isVisitable && (
+                          <a
+                            href={resourceUrl || undefined}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="action-btn resource-link-btn"
+                            aria-disabled={!hasValidUrl}
+                            onClick={(e) => {
+                              if (!hasValidUrl) e.preventDefault();
+                            }}
+                            title={hasValidUrl ? 'Visit resource' : 'Invalid or missing URL'}
+                          >
+                            <ExternalLink size={16} /> Visit
+                          </a>
+                        )}
+                      </div>
+
+                      {expandedComments.has(item.id) && (
+                        <div className="comments-section">
+                          {item.comments?.map((c) => (
+                            <div key={c.id} className="comment-item">
+                              <strong>{c.user}:</strong> {c.text}
+                            </div>
+                          ))}
+
+                          <div className="comment-input-wrapper">
+                            <input
+                              placeholder="Comment..."
+                              value={commentInputs[item.id] || ''}
+                              onChange={(e) =>
+                                setCommentInputs({
+                                  ...commentInputs,
+                                  [item.id]: e.target.value
+                                })
+                              }
+                            />
+                            <button type="button" onClick={() => addComment(item.id)}>
+                              <Send size={12} />
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
-
-                    {expandedComments.has(item.id) && (
-                      <div className="comments-section">
-                        {item.comments?.map((c) => (
-                          <div key={c.id} className="comment-item">
-                            <strong>{c.user}:</strong> {c.text}
-                          </div>
-                        ))}
-
-                        <div className="comment-input-wrapper">
-                          <input
-                            placeholder="Comment..."
-                            value={commentInputs[item.id] || ''}
-                            onChange={(e) =>
-                              setCommentInputs({
-                                ...commentInputs,
-                                [item.id]: e.target.value
-                              })
-                            }
-                          />
-                          <button type="button" onClick={() => addComment(item.id)}>
-                            <Send size={12} />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>
@@ -488,7 +531,13 @@ const Community = () => {
 
               <div className="video-grid">
                 {videos.map((v, i) => (
-                  <button key={i} className="video-card" onClick={() => openVideo(v)}>
+                  <button
+                    key={i}
+                    type="button"
+                    className="video-card"
+                    onClick={() => openVideo(v)}
+                    aria-label={`Open video: ${v?.snippet?.title || 'Video'}`}
+                  >
                     <img src={v.snippet.thumbnails.medium.url} alt="thumb" />
                     <h5>{v.snippet.title}</h5>
                   </button>
