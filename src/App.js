@@ -93,7 +93,7 @@ const AnimatedRoutes = () => {
           }
         />
 
-        {/* ✅ Saved Resources (match navbar: /favorites) */}
+        {/*  Saved Resources (match navbar: /favorites) */}
         <Route
           path="/favorites"
           element={
@@ -103,7 +103,7 @@ const AnimatedRoutes = () => {
           }
         />
 
-        {/* ✅ Back-compat alias (if anything still links to /saved) */}
+        {/* Back-compat alias (if anything still links to /saved) */}
         <Route path="/saved" element={<Navigate to="/favorites" replace />} />
 
         <Route
