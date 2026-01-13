@@ -7,7 +7,7 @@ const Video = require('../models/Video');
 const mockLiveFeed = require('./mockLiveFeed');
 const mockVideos = require('./mockVideos');
 
-// ✅ Convert mixed mock video shapes into ONE clean DB shape
+
 function normalizeVideos(list = []) {
   return list
     .map((v) => {
@@ -50,9 +50,9 @@ function normalizeVideos(list = []) {
 async function run() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ Mongo connected');
+    console.log(' Mongo connected');
 
-    // ✅ Normalize videos before insert
+    //  Normalize videos before insert
     const normalizedVideos = normalizeVideos(mockVideos);
 
     // Wipe + reinsert (best for dev)
@@ -62,12 +62,12 @@ async function run() {
     await Resource.insertMany(mockLiveFeed);
     await Video.insertMany(normalizedVideos);
 
-    console.log(`✅ Seeded Resources: ${mockLiveFeed.length}`);
-    console.log(`✅ Seeded Videos (normalized): ${normalizedVideos.length}`);
+    console.log(` Seeded Resources: ${mockLiveFeed.length}`);
+    console.log(` Seeded Videos (normalized): ${normalizedVideos.length}`);
 
     process.exit(0);
   } catch (err) {
-    console.error('❌ Seed failed:', err);
+    console.error(' Seed failed:', err);
     process.exit(1);
   }
 }
