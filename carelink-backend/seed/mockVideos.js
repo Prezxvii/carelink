@@ -1,5 +1,5 @@
 // carelink-backend/seed/mockVideos.js
-// Clean DB-ready shape for Mongo (matches models/Video.js)
+
 
 module.exports = [
   {
