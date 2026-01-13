@@ -44,10 +44,10 @@ const Community = () => {
   const openVideo = useCallback((video) => setActiveVideo(video), []);
   const closeVideo = useCallback(() => setActiveVideo(null), []);
 
-  // ✅ Grab a URL from either "link" OR "url" (supports MOCK_LIVE_FEED)
+  //  Grab a URL from either "link" OR "url" (supports MOCK_LIVE_FEED)
   const getItemUrl = useCallback((item) => item?.link || item?.url || '', []);
 
-  // ✅ Normalize & validate URLs (adds https:// when missing)
+  //  Normalize & validate URLs (adds https:// when missing)
   const normalizeUrl = useCallback((raw) => {
     if (!raw) return null;
 
@@ -193,7 +193,7 @@ const Community = () => {
       user: 'You',
       title: shareForm.title,
       text: shareForm.description,
-      // ✅ store as link (your feed supports link/url either way)
+      // store as link (your feed supports link/url either way)
       link: shareForm.link,
       time: 'Just now',
       likes: 0,
@@ -431,7 +431,7 @@ const Community = () => {
                           <MessageCircle size={16} /> {item.comments?.length || 0}
                         </button>
 
-                        {/* ✅ Show for ANY item that includes link/url (NYC + user + resource) */}
+                        {/*  Show for ANY item that includes link/url (NYC + user + resource) */}
                         {isVisitable && (
                           <a
                             href={resourceUrl || undefined}
