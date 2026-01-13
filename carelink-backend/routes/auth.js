@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// ✅ (OPTIONAL but recommended) Better token extraction:
+
 // supports: x-auth-token OR Authorization: Bearer <token>
 const auth = async (req, res, next) => {
   const headerToken = req.header('x-auth-token');
