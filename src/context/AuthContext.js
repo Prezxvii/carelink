@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 
 const AuthContext = createContext();
 
-// ✅ Keep REACT_APP_API_URL as DOMAIN only:
+// REACT_APP_API_URL as DOMAIN only:
 //   Local:  http://localhost:5000
 //   Prod:   https://carelink-60s8.onrender.com
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -19,10 +19,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ helper: always read token the same way
+  //  helper: always read token the same way
   const getToken = () => localStorage.getItem('carelink_token');
 
-  // ✅ helper: build auth headers for protected routes
+  //  helper: build auth headers for protected routes
   const authHeaders = (token) => ({
     'Content-Type': 'application/json',
     'x-auth-token': token
